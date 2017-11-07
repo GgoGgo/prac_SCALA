@@ -21,10 +21,12 @@ object gList {
     case Nil => 1.0
     case Cons(x,xs) => x * product(xs)
   }
-
   def tail[A](as: gList[A]): gList[A] = as match {
     case Nil        => Nil
     case Cons(x,xs) => xs
+  }
+  def setHead[A](a: A, as: gList[A]): gList[A] = {
+    Cons(a, as)
   }
 
   // variadic function
