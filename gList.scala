@@ -33,27 +33,28 @@ object gList {
     Cons(a, as)
   }
   def drop[A](l: gList[A], n: Int): gList[A] = {
-    def go[A](as: gList[A], n: Int): gList[A] = as match {
+    def go(as: gList[A], n: Int): gList[A] = as match {
       case Nil        => Nil
       case Cons(x,xs) =>  if (n <= 0) as
                           else go(xs, n-1)
     }
     go(l,n)
   }
-  def dropWhile[A](l: gList[A], f: A => Boolean): gList[A] = {
-    def go[A](as: gList[A], f: A => Boolean):gList[A] = as match {
-      case Nil        => Nil
-      case Cons(x,xs) =>  if (f(x)) go(xs, f)
-                          else as
-    }
-    go(l, f)
+  // when a function definition contains multiple argument groups, type information flows
+  // from left to right across these argument groups
+  // so it can be called like
+  // gList.dropWhile(gList(1, 2, 3 ,4))(x => x < 2)
+  // not gList.dropWhile(gList(1, 2, 3 ,4))(x: Int => x <2)
+  def dropWhile[A](l: gList[A])(f: A => Boolean): gList[A] = l match {
+    case Cons(x,xs) if f(x) => dropWhile(xs)(f)
+    case _ => l // actually it's only can be 'Nil'
   }
   def append[A](a1: gList[A], a2: gList[A]): gList[A] = a1 match {
     case Nil => a2
     case Cons(x,xs) => Cons(x, append(xs,a2))
   }
   def init[A](l: gList[A]): gList[A] = {
-    def go[A](as: gList[A], acc: gList[A]): gList[A] = as match {
+    def go(as: gList[A], acc: gList[A]): gList[A] = as match {
       case Nil => Nil
       case Cons(x,xs) =>  if (xs == Nil) acc
                           else go(xs, append(acc,gList(x)))
