@@ -76,16 +76,24 @@ object gList {
   }
   def foldRight[A,B](l: gList[A], z: B)(f: (A,B) => B): B = l match {
     case Nil => z
-    case Cons(x,xs) => f(x, foldRight(xs, z)(f))
-  }
-  def foldRight2[A,B](l: gList[A], z: B)(f: (A,B) => B): B = {
-    
+    case Cons(x, xs) => f(x, foldRight(xs, z)(f))
   }
   def foldLeft[A,B](l: gList[A], z: B)(f: (B,A) => B): B = l match {
     case Nil => z
     case Cons(x,xs) => foldLeft(xs, f(z, x))(f)
   }
-
+  def foldRight_Stacksafe[A,B](l: gList[A], z: B)(f: (A,B) => B): B = {
+    foldLeft(reverse2(l), z)((b,a) => f(a,b))   // this is stack safe because it has used foldleft for all created expression
+  }
+  def foldRight2[A,B](l: gList[A], z: B)(f: (A,B) => B): B = {
+    foldLeft(l, (b:B) => b)((g,a) => b => g(f(a,b)))(z)
+  }
+  def foldLeft2[A,B](l: gList[A], z: B)(f: (B,A) => B): B = {
+    // it's not trivial for first time reading
+    // simple heuristic is to understand 'g' as a stack which input is a, understanding f as just operator and ignore what is f when thinking about transformation is really important
+    // what f do is actually trivial, all transform is came from 'g'
+    foldRight(l, (b:B) => b)((a,g) => b => g(f(b,a)))(z)
+  }
   // doesn't need to refer type of x and y because type inference was finished with (ns, 0)
   def sum2(ns: gList[Int]) = {
     foldRight(ns, 0)((x,y) => x + y)
