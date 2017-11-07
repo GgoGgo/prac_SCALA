@@ -78,6 +78,9 @@ object gList {
     case Nil => z
     case Cons(x,xs) => f(x, foldRight(xs, z)(f))
   }
+  def foldRight2[A,B](l: gList[A], z: B)(f: (A,B) => B): B = {
+    
+  }
   def foldLeft[A,B](l: gList[A], z: B)(f: (B,A) => B): B = l match {
     case Nil => z
     case Cons(x,xs) => foldLeft(xs, f(z, x))(f)
@@ -93,14 +96,14 @@ object gList {
   def sum3(ns: gList[Int]) = {
     foldLeft(ns, 0)(_+_)
   }
-  def product2(ns: gList[Double]) = {
+  def product3(ns: gList[Double]) = {
     foldLeft(ns, 1.0)(_*_)
   }
 
-//  def reverse1[A](ns: gList[A]) = {
-//    foldRight(ns, Nil)()
-//  }
-//  def reverse2() = {
-//
-//  }
+  def reverse1[A](ns: gList[A]): gList[A] = {
+    foldRight[A,gList[A]](ns,Nil)((x,z) => append(z,gList(x)))
+  }
+  def reverse2[A](ns: gList[A]): gList[A] = {
+    foldLeft[A,gList[A]](ns, Nil)((z,x) => append(gList(x),z))
+  }
 }
