@@ -21,12 +21,32 @@ object gList {
     case Nil => 1.0
     case Cons(x,xs) => x * product(xs)
   }
-  def tail[A](as: gList[A]): gList[A] = as match {
+  def tail[A](l: gList[A]): gList[A] = l match {
     case Nil        => Nil
     case Cons(x,xs) => xs
   }
-  def setHead[A](a: A, as: gList[A]): gList[A] = {
+  // also can be
+//  def tail[A](l: gList[A]): gList[A] = {
+//    drop[A](as, 1)
+//  }
+  def setHead[A](as: gList[A], a: A): gList[A] = {
     Cons(a, as)
+  }
+  def drop[A](l: gList[A], n: Int): gList[A] = {
+    def go(as: gList[A], n: Int): gList[A] = as match {
+      case Nil        => Nil
+      case Cons(x,xs) =>  if (n <= 0) as
+                          else go(xs, n-1)
+    }
+    go(l,n)
+  }
+  def dropWhile[A](l: gList[A], f: A => Boolean): gList[A] = {
+    def go(as: gList[A], f: A => Boolean):gList[A] = as match {
+      case Nil        => Nil
+      case Cons(x,xs) =>  if (f(x)) go(xs, f)
+                          else as
+    }
+    go(l, f)
   }
 
   // variadic function
