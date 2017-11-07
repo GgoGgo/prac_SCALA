@@ -21,6 +21,8 @@ object gList {
     case Nil => 1.0
     case Cons(x,xs) => x * product(xs)
   }
+
+
   def tail[A](l: gList[A]): gList[A] = l match {
     case Nil        => Nil
     case Cons(x,xs) => xs
@@ -61,6 +63,9 @@ object gList {
     }
     go(l, Nil)
   }
+  def length[A](l: gList[A]): Int = {
+    foldRight(l, 0)((x,y) => 1 + y)
+  }
 
   // variadic function
   // A* means almost same as ... argument in c/c++
@@ -69,4 +74,33 @@ object gList {
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))  // 'as.tail: _*' makes type of parameter to 'Seq', so can be passed to method
   }
+  def foldRight[A,B](l: gList[A], z: B)(f: (A,B) => B): B = l match {
+    case Nil => z
+    case Cons(x,xs) => f(x, foldRight(xs, z)(f))
+  }
+  def foldLeft[A,B](l: gList[A], z: B)(f: (B,A) => B): B = l match {
+    case Nil => z
+    case Cons(x,xs) => foldLeft(xs, f(z, x))(f)
+  }
+
+  // doesn't need to refer type of x and y because type inference was finished with (ns, 0)
+  def sum2(ns: gList[Int]) = {
+    foldRight(ns, 0)((x,y) => x + y)
+  }
+  def product2(ns: gList[Double]) = {
+    foldRight(ns, 1.0)(_ * _) // this notation can be used when type inference works for it
+  }
+  def sum3(ns: gList[Int]) = {
+    foldLeft(ns, 0)(_+_)
+  }
+  def product2(ns: gList[Double]) = {
+    foldLeft(ns, 1.0)(_*_)
+  }
+
+//  def reverse1[A](ns: gList[A]) = {
+//    foldRight(ns, Nil)()
+//  }
+//  def reverse2() = {
+//
+//  }
 }
