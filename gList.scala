@@ -33,7 +33,7 @@ object gList {
     Cons(a, as)
   }
   def drop[A](l: gList[A], n: Int): gList[A] = {
-    def go(as: gList[A], n: Int): gList[A] = as match {
+    def go[A](as: gList[A], n: Int): gList[A] = as match {
       case Nil        => Nil
       case Cons(x,xs) =>  if (n <= 0) as
                           else go(xs, n-1)
@@ -41,12 +41,24 @@ object gList {
     go(l,n)
   }
   def dropWhile[A](l: gList[A], f: A => Boolean): gList[A] = {
-    def go(as: gList[A], f: A => Boolean):gList[A] = as match {
+    def go[A](as: gList[A], f: A => Boolean):gList[A] = as match {
       case Nil        => Nil
       case Cons(x,xs) =>  if (f(x)) go(xs, f)
                           else as
     }
     go(l, f)
+  }
+  def append[A](a1: gList[A], a2: gList[A]): gList[A] = a1 match {
+    case Nil => a2
+    case Cons(x,xs) => Cons(x, append(xs,a2))
+  }
+  def init[A](l: gList[A]): gList[A] = {
+    def go[A](as: gList[A], acc: gList[A]): gList[A] = as match {
+      case Nil => Nil
+      case Cons(x,xs) =>  if (xs == Nil) acc
+                          else go(xs, append(acc,gList(x)))
+    }
+    go(l, Nil)
   }
 
   // variadic function
