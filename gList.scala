@@ -22,7 +22,6 @@ object gList {
     case Cons(x,xs) => x * product(xs)
   }
 
-
   def tail[A](l: gList[A]): gList[A] = l match {
     case Nil        => Nil
     case Cons(x,xs) => xs
@@ -71,7 +70,7 @@ object gList {
     go(l, Nil)
   }
   def length[A](l: gList[A]): Int = {
-    foldRight(l, 0)((x,y) => 1 + y)
+    foldRight(l, 0)((_,acc) => 1 + acc)
   }
 
   // variadic function
@@ -133,5 +132,29 @@ object gList {
   def map[A,B](as: gList[A])(f: A => B): gList[B] = as match {
     case Nil => Nil
     case Cons(x,xs) => Cons(f(x), map(xs)(f))
+  }
+  def filter[A](as: gList[A])(f: A => Boolean): gList[A] = as match {
+    case Nil => Nil
+    case Cons(x,xs) =>  if (f(x)) Cons(x, filter(xs)(f))
+                        else filter(xs)(f)
+  }
+  def filterByFlatMap[A](as: gList[A])(f: A => Boolean): gList[A] = {
+    flatMap(as)((a) => if (f(a)) gList(a) else Nil)
+  }
+  def flatMap[A,B](as: gList[A])(f: A => gList[B]): gList[B] = as match {
+    case Nil => Nil
+    case Cons(x,xs) => append(f(x), flatMap(xs)(f))
+  }
+  def head(l: gList[Int]): Int = l match {
+    case Nil        => 0
+    case Cons(x,xs) => x
+  }
+  def addGlist(as: gList[Int], bs: gList[Int]): gList[Int] = {
+    if ((length(as) != length(bs)) || as == Nil) Nil
+    else Cons(head(as) + head(bs),addGlist(tail(as),tail(bs)))
+  }
+  def zipWith[A,B](f: (A,B) => B,as: gList[A], bs: gList[B]): gList[B] = (as,bs) match {
+    case (Cons(x,xs), Cons(y,ys)) => Cons(f(x,y), zipWith(f, xs, ys))
+    case (_,_) => Nil
   }
 }
