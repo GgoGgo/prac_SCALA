@@ -121,4 +121,17 @@ object gList {
   def reverse2[A](ns: gList[A]): gList[A] = {
     foldLeft[A,gList[A]](ns, Nil)((z,x) => append(gList(x),z))
   }
+  def addOne(ints: gList[Int]): gList[Int] = ints match {
+    case Nil => Nil
+    case Cons(x,xs) => Cons(x+1, addOne(xs))
+  }
+  def d2String(ds: gList[Double]): gList[String] = ds match {
+    case Nil => Nil
+    case Cons(x,xs) => Cons(x.toString(), d2String(xs))
+  }
+
+  def map[A,B](as: gList[A])(f: A => B): gList[B] = as match {
+    case Nil => Nil
+    case Cons(x,xs) => Cons(f(x), map(xs)(f))
+  }
 }
