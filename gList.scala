@@ -55,6 +55,13 @@ object gList {
     case Nil => a2
     case Cons(x,xs) => Cons(x, append(xs,a2))
   }
+  def appendFoldR[A](a1: gList[A], a2: gList[A]): gList[A] = {
+    foldRight(a1, a2)((a,b) => Cons(a,b))
+  }
+  // i think give type parameter explicitly lambda function pattern matches Nil type
+  def concat[A](lists: gList[gList[A]]): gList[A] = {
+    foldRight[gList[A], gList[A]](lists, Nil)(appendFoldR(_,_))
+  }
   def init[A](l: gList[A]): gList[A] = {
     def go(as: gList[A], acc: gList[A]): gList[A] = as match {
       case Nil => Nil
