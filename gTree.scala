@@ -13,6 +13,7 @@ object gTree {
     case Leaf(_) => 1
     case Branch(l,r) => 1 + size(l) + size(r)
   }
+  // naive implementation
 //  def maximum(t: gTree[Int]): Int = {
 //    def go(t: gTree[Int], m: Int): Int = t match {
 //      case Leaf(v) => v max m
@@ -20,6 +21,7 @@ object gTree {
 //    }
 //    go(t, 0)
 //  }
+  // functional implementation
   def maximum(t: gTree[Int]): Int = t match {
     case Leaf(v) => v
     case Branch(l,r) => maximum(l) max maximum(r)
