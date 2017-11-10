@@ -14,22 +14,20 @@ sealed trait gOption[+A] {
     case None => None
     case Some(a) => Some(f(a))
   }
-  def flatMap[B](f: A => gOption[B]): gOption[B] = this match {
-    case None => None
-    case Some(a) => f(a)
+  def flatMap[B](f: A => gOption[B]): gOption[B] = {
+    map(f).getOrElse(None)
   }
   def getOrElse[B >: A](default: => B): B = this match {
     case None => default
     case Some(a) => a
   }
-  def orElse[B >: A](ob: => gOption[B]): gOption[B] = this match {
-    case None => ob
-    case Some(a) => Some(a)
+  def orElse[B >: A](ob: => gOption[B]): gOption[B] = {
+    this map(Some(_)) getOrElse(ob)
   }
+  // if => is in front of if expression, it evaluates if statement as Unit (unless else specified)
   def filter(f: A => Boolean): gOption[A] = this match {
-    case None => None
-    case Some(a) => if (f(a)) Some(a)
-                    else None
+    case Some(a) if (f(a)) => Some(a)
+    case _ => None
   }
 }
 case class Some[+A](get: A) extends gOption[A]
