@@ -15,7 +15,7 @@ sealed trait gOption[+A] {
     case Some(a) => Some(f(a))
   }
   def flatMap[B](f: A => gOption[B]): gOption[B] = {
-    map(f).getOrElse(None)
+    map(f) getOrElse None
   }
   def getOrElse[B >: A](default: => B): B = this match {
     case None => default
@@ -39,5 +39,12 @@ object gOption {
     if (xs.isEmpty) None
     else Some(xs.sum / xs.length)
   }
+  def variance(xs: Seq[Double]): Option[Double] = {
+    mean(xs) flatMap(m => mean(xs.map(x => math.pow(x-m, 2))))
+  }
+  // any function (e.g. math functions) can be transform to operate on gOption context
+  def lift[A,B](f: A => B): gOption[A] => gOption[B] = _ map f
 }
+
+
 
