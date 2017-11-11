@@ -1,5 +1,5 @@
 //
-// List.scala
+// gTree.scala
 // Create by GgoGgo at 11/8/17
 // Copyright 2017 GgoGgo, All rights reserved
 //

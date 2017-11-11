@@ -1,5 +1,5 @@
 //
-// List.scala
+// gList.scala
 // Create by GgoGgo at 11/7/17
 // Copyright 2017 GgoGgo, All rights reserved
 //

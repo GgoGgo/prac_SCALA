@@ -1,11 +1,11 @@
 //
-// List.scala
+// gOption.scala
 // Create by GgoGgo at 11/10/17
 // Copyright 2017 GgoGgo, All rights reserved
 //
 
 // error occurs without package definition
-package prac.scala.gOption
+package prac.scala.temp
 //import scala.{Option => _}
 import scala.{Option => _, Either => _, _}
 
@@ -56,6 +56,15 @@ object gOption {
 //  }
   // functional implementation
   def map2[A,B,C](a: gOption[A], b: gOption[B])(f: (A,B) => C): gOption[C] = a flatMap(aa => b map (bb => f(aa,bb)))
+  // with for-comprehension
+  // it automatically expands to a series of flatMap and map
+  def map2[A,B,C](a: gOption[A], b: gOption[B])(f: (A,B) => C):
+  gOption[C] =
+    for {
+      aa <- a
+      bb <- b
+    } yield f(aa, bb)
+
 
   def sequence[A](as: List[gOption[A]]): gOption[List[A]] = as match {
     case Nil => Some(Nil)
