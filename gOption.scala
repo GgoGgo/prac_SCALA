@@ -61,6 +61,15 @@ object gOption {
     case Nil => Some(Nil)
     case x::xs => x flatMap (xx => sequence(xs) map (xx :: _))
   }
+  def sequence1[A](as: List[gOption[A]]): gOption[List[A]] = traverse1(as)((a:gOption[A]) => a)
+
+  def traverse[A,B](a: List[A])(f: A => gOption[B]): gOption[List[B]] = {
+    sequence(a map f)
+  }
+  def traverse1[A,B](a: List[A])(f: A => gOption[B]): gOption[List[B]] = a match {
+    case Nil => Some(Nil)
+    case x::xs => f(x) flatMap (xx => traverse1(xs)(f) map (xx :: _))
+  }
 
   def Try[A](a: => A): gOption[A] = {
     try Some(a)
