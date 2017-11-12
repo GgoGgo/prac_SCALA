@@ -17,9 +17,9 @@ object gStream {
     lazy val tail = t
     Cons(() => head, () => tail)
   }
-  def empty: gStream[A] = Empty
+  def empty[A]: gStream[A] = Empty
 
   def apply[A](as: A*): gStream[A] = {
-    if (as.isEmpty) empty else Cons(as.head, apply(as.tail: _*))
+    if (as.isEmpty) empty else cons(as.head, apply(as.tail: _*))
   }
 }
