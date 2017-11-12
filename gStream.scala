@@ -6,7 +6,25 @@
 
 package prac.scala.temp
 
-sealed trait gStream[+A]  // aka lazy list
+// aka lazy list
+sealed trait gStream[+A] {
+  def headOption: Option[A] = this match {
+    case Empty => None
+    case Cons(h,t) => Some(h()) // have to force thunk to get data
+  }
+  def toList: List[A] = this match {
+    case Empty => Nil
+    case Cons(h,t) => h() :: t().toList
+  }
+  def take(n: Int): gStream[A] = this match {
+    case Empty => Empty
+    case Cons(h,t) => gStream.cons(h(), t().take(n-1))
+  }
+  def takeWhile(p: A => Boolean): gStream[A] = this match {
+    case Cons(h,t) if(p(h())) => t().takeWhile(p)
+    case _ => Empty
+  }
+}
 case object Empty extends gStream[Nothing]
 case class Cons[+A](h: () => A, t: () => gStream[A]) extends gStream[A]
 
