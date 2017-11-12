@@ -24,6 +24,17 @@ sealed trait gStream[+A] {
     case Cons(h,t) if(p(h())) => t().takeWhile(p)
     case _ => Empty
   }
+  // p is abbr of predicate
+  def exist(p: A => Boolean): Boolean = this match {
+    case Cons(h,t) => p(h()) || t().exist(p)
+    case _ => false
+  }
+  def exists(p: A => Boolean): Boolean = foldRight(false)((a,b) => p(a) || b)
+  def foldRight[B](z: => B)(f: (A, => B) => B): B = this match {
+    case Cons(h,t) => f(h(), t().foldRight(z)(f))
+    case _ => z
+  }
+
 }
 case object Empty extends gStream[Nothing]
 case class Cons[+A](h: () => A, t: () => gStream[A]) extends gStream[A]
