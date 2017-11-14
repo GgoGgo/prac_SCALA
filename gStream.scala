@@ -43,14 +43,16 @@ sealed trait gStream[+A] {
   }
   def forAll(p: A => Boolean): Boolean = foldRight(true)((a,b) => p(a) && b)
 
-  def map[B](f: A => B): Option[B] = this match {
-    
+  def map[B](f: A => B): gStream[B] = {
+    foldRight(gStream.empty[B])((h,t) => gStream.cons(f(h),t))
   }
-  def flatMap[B](f: A => Option[B]): Option[B] = {
-
+  def flatMap[B](f: A => gStream[B]): gStream[B] = {
+    foldRight(gStream.empty[B])((h,t) => f(h) append t)
   }
-  def filter
-  def append
+//  def filter
+  def append[B>:A](z: gStream[B]) = {
+    foldRight(z)((h,t) => gStream.cons(h,t))
+  }
 }
 case object Empty extends gStream[Nothing]
 case class Cons[+A](h: () => A, t: () => gStream[A]) extends gStream[A]
