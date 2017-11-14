@@ -12,6 +12,9 @@ sealed trait gStream[+A] {
     case Empty => None
     case Cons(h,t) => Some(h()) // have to force thunk to get data
   }
+  def headOptions: Option[A] = {
+    this.foldRight(None: Option[A])((h,_) => Some(h))
+  }
   def toList: List[A] = this match {
     case Empty => Nil
     case Cons(h,t) => h() :: t().toList
@@ -21,9 +24,13 @@ sealed trait gStream[+A] {
     case Cons(h,t) => gStream.cons(h(), t().take(n-1))
   }
   def takeWhile(p: A => Boolean): gStream[A] = this match {
-    case Cons(h,t) if(p(h())) => t().takeWhile(p)
+    case Cons(h,t) if(p(h())) => gStream.cons(h(),t().takeWhile(p))
     case _ => Empty
   }
+  def takeWhiles(p: A => Boolean): gStream[A] =
+    foldRight(gStream.empty[A])((a,b) =>
+      if (p(a)) gStream.cons(a,b)
+      else gStream.empty)
   // p is abbr of predicate
   def exist(p: A => Boolean): Boolean = this match {
     case Cons(h,t) => p(h()) || t().exist(p)
@@ -34,7 +41,7 @@ sealed trait gStream[+A] {
     case Cons(h,t) => f(h(), t().foldRight(z)(f))
     case _ => z
   }
-
+  def forAll(p: A => Boolean): Boolean = foldRight(true)((a,b) => p(a) && b)
 }
 case object Empty extends gStream[Nothing]
 case class Cons[+A](h: () => A, t: () => gStream[A]) extends gStream[A]
